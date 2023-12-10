@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Home Screen</title>
+    <link rel="stylesheet" href="homePageStyle2.css">
+    <link rel="icon" type="image/png" sizes="50x50" href="./android-chrome-192x192.png">
+</head>
+<body>
+    <div class="background">
+        <img src="homePageImage.png" alt="Background" class="background-image">
+        <div class="overlay">
+            <button class="play-button" type="submit" onclick="startGame()">PLAY</button>
+            <button class="instructions-button" type="button">instructions</button>
+        </div>
+    </div>
+
+    <div id="instructionsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Instructions</h2>
+            <div class="instructions-container"></div>
+                <div class="instruction-set2">
+                    <div class="instruction-text">
+                        <p>Use the arrow keys to move Clyde the cloud around the screen.</p>
+                    </div>
+                    <div class="instruction-image3">
+                        <img src="./Arrows.png" alt="Arrow keys">
+                    </div>
+                </div>
+                <div class="instruction-set2">
+                    <div class="instruction-text">
+                        <p>Don't let the health bar drop to zero. 
+                         If it does, you lose the game. Try to survive as long as possible.</p>
+                    </div>
+                    <div class="instruction-image2">
+                        <img src="./InstructionHealthBar.png" alt="HealthBar">
+                    </div>
+                </div>
+                <div class="instruction-set2">
+                    <div class="instruction-text">
+                        <p>Avoid getting hit by Sunnie the sun. Every time you get hit your health is permanently reduced.</p>
+                    </div>
+                    <div class="instruction-image2">
+                        <img src="./healthbarRdece.png" alt="DamageBar">
+                    </div>
+                </div>
+                <div class="instruction-set">
+                        <div class="instruction-text">
+                            <p>Pick up health packs to recover some random dried out lands on the map.</p>
+                        </div>
+                        <div class="instruction-image">
+                            <img src="./InstructionHealthpack.png" alt="Healthpack">
+                        </div>
+                </div>
+                <div class="instruction-set">
+                    <div class="instruction-text">
+                        <p>  Pick up the buckets to water the region around it and protect it from the sun for a short time.</p>
+                    </div>
+                    <div class="instruction-image">
+                        <img src="./InstructionBucket.png" alt="Bucket">
+                    </div>
+                </div>
+                <div class="instruction-set">
+                    <div class="instruction-text">
+                        <p>Avoid the fires so you don't burn the land. Clyde can't water the land that's been burned.</p>
+                    </div>
+                    <div class="instruction-image">
+                        <img src="./InstructionFire.png" alt="Fire">
+                    </div>
+                </div>
+            
+                <div class="instruction-set">
+                    <div class="instruction-text">
+                            <p>Avoid the stopwatches so you don't slow down your movement.</p>
+                    </div>
+                    <div class="instruction-image">
+                        <img src="./InstructionStopwatch.png" alt="Stopwatch">
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+        </div>
+    </div>
+
+    <script>
+        function startGame() {
+            // alert("Button clicked!");
+            window.location.href = 'game.html'; // Redirect to game.html
+        }
+
+        // Get the modal
+        var modal = document.getElementById("instructionsModal");
+        // Get the button that opens the modal
+        var btn = document.getElementsByClassName("instructions-button")[0];
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Sunnie and Clyde</title>
+    <script src="./lib/gl-matrix-min.js"></script>
+    <script src="./lib/dat.gui.min.js"></script>
+    <script type="module" src="main2.js"></script>
+    <link rel="icon" type="image/png" sizes="50x50" href="./android-chrome-192x192.png">
+    <link rel="stylesheet" href="./common/style.css">
+    <link rel="stylesheet" href="./homePageStyle2.css">
+
+    <!-- ce hoces centrirat, daj element, ki ga hoces centrirat v en element k je full screen.
+    in ta element, k je full screen more bit flex!! -->
+    <style>
+        #homeButton {position:fixed;left:2vw; top:2vh; width:10vw; z-index:8;}
+        #playButton {position:fixed;left:88vw; top:2vh;width:10vw; z-index: 8; }
+        #pauseButton {position:fixed;left:88vw; top:2vh;width:10vw; z-index: 10;}
+        #podlaga{position:fixed;left:32.5vw; top:30vh;width:35vw; z-index: 10; visibility: hidden;} 
+        #yesButton {position:fixed;left:42.4vw; top:50.8vh;width:7.6vw; z-index: 10; visibility:hidden}
+        #noButton {position:fixed;left:50.6vw; top:51.3vh;width:7vw; z-index: 10;visibility: hidden;}
+        #GamePaused {position:fixed;left:25vw; top:40vh;width:50vw; z-index: 10; visibility: hidden;}
+
+        /* #displayArea {
+            position:fixed;
+            left:45vw;
+            top:2vh;
+            width:10vw;
+            z-index:8;       
+        } */
+
+        /* #health {
+            position:fixed;
+            left:45vw;
+            top:6vh;
+            width:10vw;
+            z-index:8;       
+        } */
+
+        #health-bar-container {
+            width: 200px;
+            height: 30px;
+            background-color: #ae4119; /*#eee; /* Color for the empty part */
+            border-radius: 100px; /* for rounded corners */
+            overflow: hidden;
+            position: relative;
+            left: 42.5vw;
+            top: 6vh;
+            z-index: 8;
+            /*border: 2px solid #343434;*/
+            display: flex; 
+            align-items: center; /* Center items vertically */
+            border: 2px solid #64260f; /* Slightly darker shade for 3D effect */
+            box-shadow: 
+                0 4px #64260f, /* First shadow: blue shadow for depth */
+                5px 8px 8px rgba(0, 0, 0, 0.5); /* Second shadow: black shadow for cast effect */
+        }
+
+        #health-bar {
+            height: 100%;
+            width: 100%;
+            background-color: #92d03d; /*#4caf50; /* Color for the filled part */
+            border-radius: 100px; /* Keep consistent with the container's radius */
+            transition: width 0.5s ease; /* for a smooth transition effect */
+        }
+
+        @font-face {
+            font-family: 'EmotinalBaggage';
+            src: url('./fonts/emotional_baggage/EmotionalBaggage-Regular.ttf') format('truetype');
+        }
+
+        #health-text-right {
+            position: absolute; /* Absolute positioning */
+            left: 50%; /* Center horizontally */
+            top: 50%; /* Center vertically */
+            transform: translate(-50%, -50%);
+            margin: 0;
+            /* margin: 0 10px; Space around the text */
+            font-size: 20px;
+            font-family: 'EmotinalBaggage', sans-serif;
+            color: white; /* Set text color */
+
+            /* Create a black border effect around the text */
+            /* text-shadow:
+                -2px -2px 0 #000,
+                 2px -2px 0 #000,
+                -2px  2px 0 #000,
+                 2px  2px 0 #000; */
+        }
+      
+        div#igra {
+            position:fixed;
+            width:2560px;
+            height:1440px;
+        }
+        canvas {
+            position: fixed;
+            left : 0px;
+            top : 0px;
+        }
+        #canvasContainer {
+             position: relative;
+        }
+
+      
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            pointer-events: none; /* Allows clicks to pass through */
+            display: none; /* Initially hidden */
+        }
+
+        #webgpuCanvas {
+            display: block; /* Removes the default canvas margin */
+        }
+
+    </style>
+</head>
+<body>
+    <div id = "igra">
+    <!-- <div id="displayArea"></div> -->
+    <input id='homeButton' type="image" onClick="popUpObvestilo()" src="./Gumbi/homeButton.png">
+    <input id='playButton' type="image" onClick="zamenjajPlay()" src="./Gumbi/playButton.png">
+    <input id='pauseButton' type="image" onClick="zamenjajPause()" src="./Gumbi/pauseButton.png" >
+
+    <!-- <progress id="health" value="30" max="30"></progress> -->
+    <!-- <span id="health-text-left">0</span> -->
+    <div id="health-bar-container">
+        <div id="health-bar"></div>
+        <span id="health-text-right"></span>
+    </div>
+
+    <div id="gameOverModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="gameOverHeading">GAME OVER</p>
+            <p id="survivalTime">You survived for: <span id="timeDisplay">0</span> seconds</p>
+            <button id="replayButton" onClick="replay()">Replay</button>
+            <button id="homepageButton" onClick="goToHomePage()">Homepage</button>
+        </div>
+    </div>    
+
+    <div><img id='podlaga'src="./Gumbi/notificationPodlaga.png" ></div>
+    <div><img id='GamePaused'src="./Gumbi/GamePausedText.png" ></div>
+    <input id='yesButton' type="image" onClick="goToHomePage()" src="./Gumbi/yesNoGlow.png" >
+    <input id='noButton' type="image" onClick="noButtonHomePage()" src="./Gumbi/noNoGlow.png" >
+    <div class="fullscreen no-touch pixelated" id="canvasContainer">
+        
+        <canvas width="2560" height="1440"></canvas>
+        <div id="overlay" style="display: none;"></div>
+    </div>
+        <audio src="./Sounds/roa-music-walk-aroundchosic.mp3" id="pesem" loop="loop"></audio>
+    </div>
+<script>
+    var soundHome = new Audio("./Sounds/buttonHomeTrimmed.mp3");
+    var soundPause = new Audio("./Sounds/buttonPauseTrimmed.mp3");
+
+    function showOverlay() {
+        const overlay = document.getElementById('overlay');
+        overlay.style.display = 'block'; // Show the overlay
+    }
+    function hideOverlay() {
+        const overlay = document.getElementById('overlay');
+        overlay.style.display = 'none'; // Hide the overlay
+    }
+
+
+    function zamenjajPause(){
+        soundPause.play();
+        showOverlay();
+        document.getElementById("pauseButton").style.visibility = "hidden";
+        document.getElementById("GamePaused").style.visibility = "visible";
+        soundPause.currentTime = 0;
+
+
+    }   
+    function zamenjajPlay(){
+        soundPause.play();
+        hideOverlay();
+        document.getElementById("pauseButton").style.visibility = "visible";
+        document.getElementById("GamePaused").style.visibility = "hidden";
+        soundPause.currentTime = 0;
+    }
+    function popUpObvestilo(){
+        
+        soundHome.play();
+        showOverlay();
+        document.getElementById("podlaga").style.visibility = "visible";
+        document.getElementById("yesButton").style.visibility = "visible";
+        document.getElementById("noButton").style.visibility = "visible";
+        document.getElementById("pauseButton").style.visibility = "hidden";
+        document.getElementById("GamePaused").style.visibility = "hidden";
+        soundHome.currentTime = 0;
+    }
+    function goToHomePage() {
+        window.location.href = 'index.html'; // Redirect to index.html
+    }
+    function noButtonHomePage() {
+        document.getElementById("podlaga").style.visibility = "hidden";
+        document.getElementById("yesButton").style.visibility = "hidden";
+        document.getElementById("noButton").style.visibility = "hidden";
+        document.getElementById("GamePaused").style.visibility = "visible";
+    }
+
+    function replay() {
+        window.location.href = 'game.html';
+    }
+
+    window.addEventListener('resize', () => {
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        // Do not change canvas.width and canvas.height as it would resize the drawing buffer
+    });
+</script>
+</body>
+</html>
